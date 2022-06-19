@@ -1,4 +1,152 @@
+opcion1 macro 
+	limpiarBuffer bufferLectura
+	limpiarBuffer nombrePadre
+	limpiarBuffer nombreReporte
+	limpiarBuffer namePadre
+	getRuta rutaArchivo
+	openF rutaArchivo, handleFichero
+	leerF SIZEOF bufferLectura, bufferLectura, handleFichero
+	closeF handleFichero  	;print bufferLectura
+	leyendoJSON bufferLectura
+	print msgArchivoLeido ; archivo leido con exito
+endm 
 
+print macro cadena
+		MOV ah, 09h
+		MOV dx,offset cadena
+		INT 21h
+endm 
+
+print2 macro cadena
+		MOV ah, 09h
+		MOV dx, cadena
+		INT 21h
+endm 
+
+
+
+
+leyendoJSON  macro buffer
+		LOCAL SALIR, BuscarID, guardarID, guardarPadre, ObtenerNumero, BuscarNumero , Operacion, Multiplicacion 
+		LOCAL IngresarID, CONTINUE, EndNumero, abrirLlave, cerrarLlave, FinOperacion, Division, Suma, Resta
+		LOCAL operarFIN, guardaIDoperacion, Csuma, Cresta, Cmultiplicacion, Cdivision, guardarOperaciones 
+		LOCAL numeroNegativo
+		limpiarBuffer bufferOperaciones
+		limpiarBuffer nombrePadre
+		limpiarBuffer nombreReporte
+		limpiarBuffer bufferAux
+		limpiarBuffer nombreOperacion
+		limpiarBuffer operaciones 
+		limpiarBuffer bufferMediaR
+		limpiarBuffer bufferMedianaR
+		limpiarBuffer bufferMayorR
+		limpiarBuffer bufferMenorR
+		limpiarBuffer bufferModaR
+
+		XOR si, si 
+		XOR cx, cx 
+		XOR ax, ax 
+		XOR bx, bx 
+		XOR dx, dx 
+		MOV contadorPadre, 0
+		MOV finOpe, 0
+		MOV contadorLLaves, 0
+		MOV contadorNumero, 0
+		MOV totalOperaciones, 0
+		MOV contadorguardar, 0
+
+		CICLO:
+			MOV dh, buffer[si]
+
+			CMP dh, 22h ;  "
+			JE  BuscarID 
+			CMP dh, 7Bh ; {
+			JE abrirLlave 
+			CMP dh, 7Dh ; }
+			JE cerrarLlave
+			JMP CONTINUE
+
+		CONTINUE:		
+			CMP dh, 24h ; $ 
+			JE SALIR 
+			INC si 
+			JMP CICLO
+			
+
+		abrirLlave:
+		;print tllavea
+		;print saltoLinea
+			INC si 
+			CMP contadorPadre, 0
+			JE CICLO
+			ADD contadorLLaves, 1 
+			JMP CICLO
+
+		cerrarLlave:
+		;print llave1
+		;print saltoLinea
+			SUB contadorLLaves, 1
+			CMP contadorLLaves, 2
+			JE FinOperacion 
+			
+			INC si 
+			JMP CICLO
+
+		FinOperacion:
+			MOV finOpe, 0
+			;print msgResultado 
+			;print nombreOperacion 
+			;print espacio 
+			; este es el resultado de la operacion 
+			JMP guardarOperaciones
+			
+		
+		guardarOperaciones:
+			XOR ax, ax 
+			POP ax 
+			MOV auxiliar, 0
+			MOV auxiliar, ax 
+			; guardar ID de la operacion 
+
+			limpiarBuffer bufferAux
+			ConvertirString bufferAux
+			;print bufferAux
+			;print saltoLinea
+			;print padre  ;nose --------------
+			llenarOperacionesR bufferOperaciones, inicioOR 
+			llenarOperacionesR bufferOperaciones, nombreOperacion
+			llenarOperacionesR bufferOperaciones, cierreComillas2
+			llenarOperacionesR bufferOperaciones, bufferAux
+			llenarOperacionesR pivote, bufferAux
+			llenarOperacionesR bufferOperaciones, finOR 
+			llenarOperacionesR bufferOperaciones, coma2
+			ADD totalOperaciones, 1
+			ingresarOperaciones operaciones
+
+			MOV ax, auxiliar 
+			PUSH ax 
+			
+			XOR ax, ax 
+			XOR cx, cx 
+			INC si 
+			JMP validar_guardado
+			;JMP CICLO
+		
+		validar_guardado:
+			ADD contadorguardar, 1
+
+			CMP contadorguardar, 1
+			JE base1 
+			CMP contadorguardar, 2
+			JE base2
+			CMP contadorguardar, 3
+			JE base3
+			CMP contadorguardar, 4
+			JE base4
+			CMP contadorguardar, 5
+			JE base5
+
+			JMP CICLO
 
 
 
