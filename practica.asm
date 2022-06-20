@@ -24,6 +24,95 @@ print2 macro cadena
 endm 
 
 
+ingresarOperaciones macro buffer 
+	LOCAL CICLO, INGRESAR
+	PUSH si 
+	PUSH ax 
+	PUSH bx 
+	PUSH cx 
+	
+	limpiarBuffer bufferAux
+	LEA si, buffer 
+	MOV cx, totalOperaciones
+
+		CICLO:
+			MOV ax, [si]
+			CMP al, 24h 
+			JE INGRESAR
+			INC si 
+			INC si 
+			JMP CICLO
+
+		INGRESAR:
+			MOV ax, auxiliar
+			MOV [si],ax
+			MOV auxiliar, 0
+			;ConvertirString bufferAux
+			;print saltoLinea 
+			;print bufferAux
+			POP cx 
+			POP bx 
+			POP ax 
+			POP si 
+endm 
+
+toString macro buffer 
+	LOCAL NEGATIVE, LIMPIAR, DIVIDIR, GUARDAR, FIN
+	PUSH si 
+	PUSH cx 
+	PUSH bx 
+	PUSH dx 
+
+	XOR si, si 
+	XOR cx, cx 
+	XOR bx, bx 
+	XOR dx, dx 
+
+	MOV bx, 0ah 
+	TEST ax, ax 
+	JNZ NEGATIVE
+	JMP DIVIDIR 
+
+	NEGATIVE:
+		NEG ax
+		MOV buffer[si], 45
+		INC si 
+		JMP DIVIDIR 
+
+	LIMPIAR:
+		XOR dx, dx 
+
+	DIVIDIR:
+		DIV bx 
+		INC cx 
+		PUSH dx 
+		CMP ax, 00h 
+		JE GUARDAR
+		JMP LIMPIAR
+
+	GUARDAR:
+		POP ax 
+		ADD ax, 30h 
+		MOV buffer[si], ah 
+
+		INC si 
+		LOOP GUARDAR
+
+		MOV ax, 24h 
+		MOV buffer[si], ah 
+
+	FIN:
+		POP dx
+		POP bx 
+		POP cx 
+		POP si 
+endm 
+
+printChar1 macro char
+	MOV dl, char
+	MOV ah, 02h 
+	int 21h 
+endm 
 
 
 leyendoJSON  macro buffer
