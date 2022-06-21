@@ -163,6 +163,7 @@ leyendoJSON  macro buffer
 			
 		
 		guardarOperaciones:
+		
 			XOR ax, ax 
 			POP ax 
 			MOV auxiliar, 0
@@ -289,6 +290,8 @@ leyendoJSON  macro buffer
 			JE Cmultiplicacion
 			CMP ah, 4Dh ; M 
 			JE Cmultiplicacion
+			CMP ah,69h ; i 
+			JE Buscaridx
 
 			PUSH ax 
 			;print saltoLinea
@@ -460,7 +463,6 @@ leyendoJSON  macro buffer
 
 		segundoNumero:
 			MOV contadorNumero, 0
-
 			;getChar
 			;print saltoLinea 
 			;print bufferAux
@@ -615,6 +617,87 @@ leyendoJSON  macro buffer
 			PUSH ax 
 			INC si 
 			JMP CICLO
+
+		Buscaridx:  ; entra lo que esta despues de "id"
+		
+			limpiarBuffer bufferAux
+		
+			INC si  ; viene d"
+			MOV dh, buffer[si]
+			CMP dh, 3Ah    ; :
+			JE Buscaridx
+			CMP dh, 20h  ; espacio
+			JE Buscaridx
+			CMP dh, 64h  ;d
+			JE Buscaridx
+			CMP dh, 22h ; ""
+			JE Buscaridx
+			
+			JMP Buscarid2  ; vaentra el identificador del numero
+
+		Buscarid2: ; entra comillas iniciales de variable  
+		
+			MOV dh, buffer[si]
+			CMP dh, 22h ; ""
+			JE Buscarid3
+
+			PUSH si 
+			XOR si, si 
+			MOV si, cx 
+			MOV bufferAux[si], dh 
+			inc cx 
+			POP si 
+			INC si 
+			JMP Buscarid2
+
+		Buscarid3: ; vienen comillas
+			INC si
+			MOV dh, buffer[si]
+			CMP dh, 2Ch ; , 
+			JE Buscarid6
+			CMP dh, 7Dh ; }
+			JE Buscarid5
+
+
+		Buscarid5:;;;;; segundo dato-------
+		SUB contadorLLaves, 1
+			MOV contadorNumero, 1
+			PUSH si 
+
+			compararCadenas2 bufferAux, name1, 20
+			cmp al, 1
+			JE  B1
+
+			compararCadenas2 bufferAux, name2, 20
+			cmp al, 1
+			JE  B2
+
+		Buscarid6:  ;;;;  primer dato, primer
+			MOV contadorNumero, 0
+			PUSH si 
+			
+			compararCadenas2 bufferAux, name1, 20
+			cmp al, 1
+			JE  B1
+
+			compararCadenas2 bufferAux, name2, 20
+			cmp al, 1
+			JE  B2
+
+		
+		B1:
+			POP si
+			limpiarBuffer bufferAux
+			llenarOperacionesR bufferAux,r1
+			JMP EndNumero
+		B2:
+			POP si
+			limpiarBuffer bufferAux
+			llenarOperacionesR bufferAux,r2
+			JMP EndNumero
+
+
+		
 
 		SALIR:
 			XOR ax, ax
@@ -991,6 +1074,37 @@ compararCadenas macro cadena1, cadena2, cantidad
 
 	SALIR:	
 endm 
+
+
+
+compararCadenas2 macro cadena1, cadena2, cantidad,resul
+	LOCAL SALIR
+	
+	;PUSH si 
+	;XOR si, si 
+	;MOV si, cx 
+			
+	MOV al, 0
+	LEA si, cadena1
+	LEA di, cadena2
+	PUSH ds
+	POP es 
+	CLD 
+	MOV cx, cantidad
+	;POP si 
+
+	REPE CMPSB 
+	JA SALIR
+	JB SALIR
+	MOV al, 1
+
+
+	SALIR:	
+endm 
+
+
+
+
 
 obtenerComandos macro 
 	LOCAL INICIO, SALIR, E, Ex, Exi, Exit,S, Sh, Sho, Show,CShow, Error 
@@ -1833,7 +1947,7 @@ inicioArchivo db 0
 contadorLlaves db 0
 contadorguardar db 0
 
-bufferAux db 30 dup('$')
+bufferAux db 20 dup('$')
 finOpe db 0
 msgRegresarPila db 0ah, 0dh, 'Regresando registros a la Pila', '$'
 msgRevisarPila db 0ah, 0dh, 'Revisando pila ', '$'
