@@ -135,8 +135,6 @@ leyendoJSON  macro buffer
 			
 
 		abrirLlave:
-		;print tllavea
-		;print saltoLinea
 			INC si 
 			CMP contadorPadre, 0
 			JE CICLO
@@ -144,8 +142,7 @@ leyendoJSON  macro buffer
 			JMP CICLO
 
 		cerrarLlave:
-		;print llave1
-		;print saltoLinea
+		
 			SUB contadorLLaves, 1
 			CMP contadorLLaves, 2
 			JE FinOperacion 
@@ -213,29 +210,34 @@ leyendoJSON  macro buffer
 		base1:
 			llenarOperacionesR name1, nombreOperacion
 			llenarOperacionesR r1, pivote
+			llenarOperacionesR date, pivote
 			limpiarBuffer pivote
 			JMP CICLO
 		base2:
 			llenarOperacionesR name2, nombreOperacion
 			llenarOperacionesR r2, pivote
+			llenarOperacionesR date, pivote
 			limpiarBuffer pivote
 			JMP CICLO
 
 		base3:
 			llenarOperacionesR name3, nombreOperacion
 			llenarOperacionesR r3, pivote
+			llenarOperacionesR date, pivote
 			limpiarBuffer pivote
 			JMP CICLO	
 
 		base4:
 			llenarOperacionesR name4, nombreOperacion
 			llenarOperacionesR r4, pivote
+			llenarOperacionesR date, pivote
 			limpiarBuffer pivote
 			JMP CICLO
 
 		base5:
 			llenarOperacionesR name5, nombreOperacion
 			llenarOperacionesR r5, pivote
+			llenarOperacionesR date, pivote
 			limpiarBuffer pivote
 			JMP CICLO
 
@@ -259,8 +261,7 @@ leyendoJSON  macro buffer
 			JMP BuscarID
 
 		guardarID:
-		;print padre
-		;print saltoLinea
+			
 			XOR cx, cx
 			XOR ax, ax 
 			MOV ah, bufferAux
@@ -626,8 +627,13 @@ leyendoJSON  macro buffer
 			MOV dh, buffer[si]
 			CMP dh, 3Ah    ; :
 			JE Buscaridx
-			CMP dh, 20h  ; espacio
+
+			CMP dh, 0ah ; \n 
+			JE  Buscaridx
+
+			CMP dh, 20h ; espacio 
 			JE Buscaridx
+
 			CMP dh, 64h  ;d
 			JE Buscaridx
 			CMP dh, 22h ; ""
@@ -658,9 +664,16 @@ leyendoJSON  macro buffer
 			CMP dh, 7Dh ; }
 			JE Buscarid5
 
+			CMP dh, 0ah ; \n 
+			JE  Buscarid3
+
+			CMP dh, 20h ; espacio 
+			JE Buscarid3
+			
+
 
 		Buscarid5:;;;;; segundo dato-------
-		SUB contadorLLaves, 1
+			SUB contadorLLaves, 1
 			MOV contadorNumero, 1
 			PUSH si 
 
@@ -672,10 +685,22 @@ leyendoJSON  macro buffer
 			cmp al, 1
 			JE  B2
 
+			compararCadenas2 bufferAux, name3, 20
+			cmp al, 1
+			JE  B3
+
+			compararCadenas2 bufferAux, name4, 20
+			cmp al, 1
+			JE  B4
+
+			compararCadenas2 bufferAux, name5, 20
+			cmp al, 1
+			JE  B5
+
 		Buscarid6:  ;;;;  primer dato, primer
 			MOV contadorNumero, 0
 			PUSH si 
-			
+
 			compararCadenas2 bufferAux, name1, 20
 			cmp al, 1
 			JE  B1
@@ -683,6 +708,18 @@ leyendoJSON  macro buffer
 			compararCadenas2 bufferAux, name2, 20
 			cmp al, 1
 			JE  B2
+
+			compararCadenas2 bufferAux, name3, 20
+			cmp al, 1
+			JE  B3
+
+			compararCadenas2 bufferAux, name4, 20
+			cmp al, 1
+			JE  B4
+
+			compararCadenas2 bufferAux, name5, 20
+			cmp al, 1
+			JE  B5
 
 		
 		B1:
@@ -696,8 +733,21 @@ leyendoJSON  macro buffer
 			llenarOperacionesR bufferAux,r2
 			JMP EndNumero
 
-
-		
+		B3:
+			POP si
+			limpiarBuffer bufferAux
+			llenarOperacionesR bufferAux,r3
+			JMP EndNumero
+		B4:
+			POP si
+			limpiarBuffer bufferAux
+			llenarOperacionesR bufferAux,r4
+			JMP EndNumero
+		B5:
+			POP si
+			limpiarBuffer bufferAux
+			llenarOperacionesR bufferAux,r5
+			JMP EndNumero
 
 		SALIR:
 			XOR ax, ax
@@ -1885,6 +1935,8 @@ msgErrorEscribir db 0ah, 0dh, 'Error al escribir archivo', '$'
 
 bufferOperaciones db 200 dup('$')
 
+date db 20 dup('$')
+
 name1 db 20 dup('$')
 r1 db 30 dup('$')
 name2 db 20 dup('$')
@@ -2021,7 +2073,8 @@ main proc
 		print msgCargarArchivo
 		opcion1
 		;print tid
-		;calcularMedia operaciones
+		;calcularMedia date
+		print date
 		;print tid
 		;calcularMayor operaciones
 		;print tid
