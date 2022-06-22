@@ -11,6 +11,305 @@ opcion1 macro
 	print msgArchivoLeido ; archivo leido con exito
 endm 
 
+
+
+media1 macro  
+	LOCAL salir, salir1,Operacion, paso1, paso2,  Csuma,EndNumero, Suma,EndNumero ,primerNumero,segundoNumero, revisarPila, regresarPila 
+
+	Csuma:
+		MOV contadorNumero, 0
+		limpiarBuffer bufferAux
+		XOR cx, cx
+		XOR ax, ax 
+		MOV ah, 2Bh ; +
+		limpiarBuffer bufferAux
+		MOV bufferAux, ah 
+		PUSH ax 
+		limpiarBuffer bufferAux
+		XOR cx, cx  
+		JMP paso1
+
+	paso1:;;;;; segundo dato-------
+		MOV contadorNumero, 0
+		limpiarBuffer bufferAux
+		llenarOperacionesR bufferAux,entra1
+		JMP EndNumero
+
+	paso2:;;;;; segundo dato-------
+		MOV contadorNumero, 1
+		limpiarBuffer bufferAux
+		llenarOperacionesR bufferAux,entra2
+		JMP EndNumero
+
+	EndNumero:
+		XOR cx, cx 
+		XOR ax, ax 
+		CMP contadorNumero, 0
+		JE primerNumero 
+		CMP contadorNumero, 1
+		JE segundoNumero
+		JMP paso2
+
+	primerNumero:
+		MOV contadorNumero, 1
+		ConvertirAscii bufferAux
+		PUSH ax 
+		XOR cx, cx 
+		JMP paso2
+
+	segundoNumero:
+		MOV contadorNumero, 0
+		ConvertirAscii bufferAux
+		PUSH ax 
+		JMP  Operacion 
+		XOR cx, cx  
+		JMP paso2
+
+	Operacion:
+		XOR bx, bx 
+		XOR cx, cx 
+		XOR ax, ax 
+		POP ax  
+		MOV bx, ax 
+		POP ax  
+		MOV cx, ax 
+		POP ax 
+
+		CMP ah, 2Bh 
+		JE Suma
+				
+
+	Suma:			
+		MOV ax, cx 
+		ADD ax, bx 
+
+		XOR cx, cx 
+		MOV cx, ax 
+		PUSH ax 
+		MOV ax, cx
+
+		MOV contadorNumero, 1
+		JMP revisarPila
+		
+		XOR cx, cx 
+		INC si 
+		JMP salir
+
+	revisarPila:
+		XOR cx, cx
+		XOR bx, bx 
+		XOR ax, ax 
+		POP ax  
+		MOV bx, ax 
+		POP ax  
+
+		CMP ah, 2Bh  ; +
+		JE regresarPila
+		
+		MOV cx, ax 
+		POP ax 
+
+		CMP ah, 2Bh 
+		JE Suma
+
+	regresarPila:
+		PUSH ax 
+		MOV ax, bx 
+		PUSH ax 
+		INC si 
+		JMP salir
+
+
+	salir:
+		XOR ax, ax 
+		POP ax 
+		MOV auxiliar, 0
+		MOV auxiliar, ax 
+
+		limpiarBuffer bufferAux
+		ConvertirString bufferAux
+		limpiarBuffer date
+		llenarOperacionesR date, bufferAux
+		limpiarBuffer bufferAux
+		MOV ax, auxiliar 
+		PUSH ax 
+		
+		XOR ax, ax 
+		XOR cx, cx 
+		JMP salir1
+	
+	salir1:
+
+endm 
+
+media2 macro  
+	LOCAL salir, salir1,Operacion, paso1, paso2,  Csuma,EndNumero, Suma,EndNumero ,primerNumero,segundoNumero, revisarPila, regresarPila 
+
+	Csuma:
+		MOV contadorNumero, 0
+		limpiarBuffer bufferAux
+		XOR cx, cx
+		XOR ax, ax 
+		MOV ah, 2Dh ; - 
+		limpiarBuffer bufferAux
+		MOV bufferAux, ah 
+		PUSH ax 
+		limpiarBuffer bufferAux
+		XOR cx, cx  
+		JMP paso1
+
+	paso1:;;;;; segundo dato-------
+		MOV contadorNumero, 0
+		limpiarBuffer bufferAux
+		llenarOperacionesR bufferAux,date
+		JMP EndNumero
+
+	paso2:;;;;; segundo dato-------
+		MOV contadorNumero, 1
+		limpiarBuffer bufferAux
+		llenarOperacionesR bufferAux,iteraciones
+		JMP EndNumero
+
+	EndNumero:
+		XOR cx, cx 
+		XOR ax, ax 
+		CMP contadorNumero, 0
+		JE primerNumero 
+		CMP contadorNumero, 1
+		JE segundoNumero
+		JMP paso2
+
+	primerNumero:
+		MOV contadorNumero, 1
+		ConvertirAscii bufferAux
+		PUSH ax 
+		XOR cx, cx 
+		JMP paso2
+
+	segundoNumero:
+		MOV contadorNumero, 0
+		ConvertirAscii bufferAux
+		PUSH ax 
+		JMP  Operacion 
+		XOR cx, cx  
+		JMP paso2
+
+	Operacion:
+		XOR bx, bx 
+		XOR cx, cx 
+		XOR ax, ax 
+		POP ax  
+		MOV bx, ax 
+		POP ax  
+		MOV cx, ax 
+		POP ax 
+
+		CMP ah, 2Fh 
+		JE Suma
+				
+
+	Suma:			
+		XOR dx, dx 
+		MOV ax, cx 
+		CWD 
+		IDIV bx		
+
+		XOR cx, cx 
+		MOV cx, ax 
+		PUSH ax 
+		MOV ax, cx
+
+		MOV contadorNumero, 1
+		JMP revisarPila
+		
+		XOR cx, cx 
+		INC si 
+		JMP salir
+
+	revisarPila:
+		XOR cx, cx
+		XOR bx, bx 
+		XOR ax, ax 
+		POP ax  
+		MOV bx, ax 
+		POP ax  
+
+		CMP ah, 2Bh  ; +
+		JE regresarPila
+		
+		MOV cx, ax 
+		POP ax 
+
+		CMP ah, 2Bh 
+		JE Suma
+
+	regresarPila:
+		PUSH ax 
+		MOV ax, bx 
+		PUSH ax 
+		INC si 
+		JMP salir
+
+
+	salir:
+		XOR ax, ax 
+		POP ax 
+		MOV auxiliar, 0
+		MOV auxiliar, ax 
+
+		limpiarBuffer bufferAux
+		ConvertirString bufferAux
+		limpiarBuffer date
+		llenarOperacionesR date, bufferAux
+		limpiarBuffer bufferAux
+		MOV ax, auxiliar 
+		PUSH ax 
+		
+		XOR ax, ax 
+		XOR cx, cx 
+		JMP salir1
+	
+	salir1:
+
+endm 
+
+llamar_media macro
+			LOCAL ciclo, ciclo1, ciclo2, ciclo3, salir
+	ciclo:
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR entra1, r1
+		llenarOperacionesR entra2, r2
+		media1 
+		JMP ciclo1
+	ciclo1:
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR entra1, date
+		llenarOperacionesR entra2, r3
+		media1 
+		JMP ciclo2
+	ciclo2:
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR entra1, date
+		llenarOperacionesR entra2, r4
+		media1 
+		JMP ciclo3
+	ciclo3:
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR entra1, date
+		llenarOperacionesR entra2, r5
+		media1 
+		JMP salir
+
+	salir:
+		print date
+
+endm
+
+
 print macro cadena
 		MOV ah, 09h
 		MOV dx,offset cadena
@@ -210,13 +509,16 @@ leyendoJSON  macro buffer
 		base1:
 			llenarOperacionesR name1, nombreOperacion
 			llenarOperacionesR r1, pivote
-			llenarOperacionesR date, pivote
 			limpiarBuffer pivote
+			limpiarBuffer iteraciones
+			llenarOperacionesR iteraciones, uno
+			
 			JMP CICLO
 		base2:
 			llenarOperacionesR name2, nombreOperacion
 			llenarOperacionesR r2, pivote
-			llenarOperacionesR date, pivote
+			limpiarBuffer iteraciones
+			llenarOperacionesR iteraciones, dos
 			limpiarBuffer pivote
 			JMP CICLO
 
@@ -225,6 +527,8 @@ leyendoJSON  macro buffer
 			llenarOperacionesR r3, pivote
 			llenarOperacionesR date, pivote
 			limpiarBuffer pivote
+			limpiarBuffer iteraciones
+			llenarOperacionesR iteraciones, tres
 			JMP CICLO	
 
 		base4:
@@ -232,6 +536,8 @@ leyendoJSON  macro buffer
 			llenarOperacionesR r4, pivote
 			llenarOperacionesR date, pivote
 			limpiarBuffer pivote
+			limpiarBuffer iteraciones
+			llenarOperacionesR iteraciones, cuatro
 			JMP CICLO
 
 		base5:
@@ -239,9 +545,12 @@ leyendoJSON  macro buffer
 			llenarOperacionesR r5, pivote
 			llenarOperacionesR date, pivote
 			limpiarBuffer pivote
+			limpiarBuffer iteraciones
+			llenarOperacionesR iteraciones, cinco
 			JMP CICLO
 
-
+		
+		
 		BuscarID:
 		
 			INC si 
@@ -766,6 +1075,9 @@ leyendoJSON  macro buffer
 			print r3
 			print bufferOperaciones  ; imprime la cadena que tiene los
 endm 
+
+
+
 
 ingresarOperaciones macro buffer 
 	LOCAL CICLO, INGRESAR
@@ -1846,6 +2158,27 @@ espacio db 20h, '$'
 
 saltoLinea db 0ah, 0dh,  '$'
 finObjeto db 0
+
+entra1 db 20 dup('$')
+entra2 db 20 dup('$')
+iteraciones db 20 dup('$')
+uno db 1 dup('1$')
+dos db 1 dup('2$')
+tres db 1 dup('3$')
+cuatro db 1 dup('4$')
+cinco db 1 dup('5$')
+seis db 1 dup('6$')
+siete db 1 dup('7$')
+ocho db 1 dup('8$')
+nueve db 1 dup('9$')
+diez db 1 dup('10$')
+on11 db 1 dup('11$')
+on12 db 1 dup('12$')
+on13 db 1 dup('13$')
+on14 db 1 dup('14$')
+on15 db 1 dup('15$')
+
+
 comandoConsola db 20 dup('$')
 comandoConsola2 db 30 dup('$') 
 showMedia db 'media', '$' 
@@ -2000,6 +2333,7 @@ contadorLlaves db 0
 contadorguardar db 0
 
 bufferAux db 20 dup('$')
+bufferAux2 db 20 dup('$')
 finOpe db 0
 msgRegresarPila db 0ah, 0dh, 'Regresando registros a la Pila', '$'
 msgRevisarPila db 0ah, 0dh, 'Revisando pila ', '$'
@@ -2072,13 +2406,10 @@ main proc
 		print encCargarArchivo
 		print msgCargarArchivo
 		opcion1
-		;print tid
-		;calcularMedia date
+		llamar_media
+		media2
 		print date
-		;print tid
-		;calcularMayor operaciones
-		;print tid
-		;calcularMenor operaciones
+
 		JMP Ingresar
 
 	Consola:
