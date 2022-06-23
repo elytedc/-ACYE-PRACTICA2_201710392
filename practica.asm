@@ -259,8 +259,8 @@ media2 macro
 
 		limpiarBuffer bufferAux
 		ConvertirString bufferAux
-		limpiarBuffer date
-		llenarOperacionesR date, bufferAux
+		limpiarBuffer bufferMediaR
+		llenarOperacionesR bufferMediaR, bufferAux
 		limpiarBuffer bufferAux
 		MOV ax, auxiliar 
 		PUSH ax 
@@ -274,7 +274,7 @@ media2 macro
 endm 
 
 llamar_media macro
-			LOCAL ciclo, ciclo1, ciclo2, ciclo3, salir
+			LOCAL ciclo, ciclo1, ciclo2, ciclo3, ciclo4, ciclo5, salir
 	ciclo:
 		limpiarBuffer entra1
 		limpiarBuffer entra2
@@ -302,13 +302,535 @@ llamar_media macro
 		llenarOperacionesR entra1, date
 		llenarOperacionesR entra2, r5
 		media1 
+		JMP ciclo4
+
+	ciclo4:
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR entra1, date
+		llenarOperacionesR entra2, r6
+		media1 
+		JMP ciclo5
+
+	ciclo5:
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR entra1, date
+		llenarOperacionesR entra2, r7
+		media1 
+		JMP ciclo6
+
+	ciclo6:
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR entra1, date
+		llenarOperacionesR entra2, r8
+		media1 
+		JMP ciclo7
+
+	ciclo7:
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR entra1, date
+		llenarOperacionesR entra2, r9
+		media1 
+		JMP ciclo8
+
+	ciclo8:
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR entra1, date
+		llenarOperacionesR entra2, r10
+		media1 
 		JMP salir
 
+	
+
 	salir:
-		print date
+	
 
 endm
 
+
+mediana1 macro  
+	LOCAL salir, salir1,Operacion, paso1, paso2,  Csuma,EndNumero, Suma,EndNumero ,primerNumero,segundoNumero, revisarPila, regresarPila 
+
+	Csuma:
+		MOV contadorNumero, 0
+		limpiarBuffer bufferAux
+		
+		XOR cx, cx 
+		XOR ax, ax 
+		MOV ah, 2Dh ; - 
+		limpiarBuffer bufferAux
+		MOV bufferAux, ah 
+		PUSH ax 
+		limpiarBuffer bufferAux
+		XOR cx, cx 
+		JMP paso1
+
+	paso1:;;;;; segundo dato-------
+		MOV contadorNumero, 0
+		limpiarBuffer bufferAux
+		llenarOperacionesR bufferAux,entra1
+		JMP EndNumero
+
+	paso2:;;;;; segundo dato-------
+		MOV contadorNumero, 1
+		limpiarBuffer bufferAux
+		llenarOperacionesR bufferAux,entra2
+		JMP EndNumero
+
+	EndNumero:
+		XOR cx, cx 
+		XOR ax, ax 
+		CMP contadorNumero, 0
+		JE primerNumero 
+		CMP contadorNumero, 1
+		JE segundoNumero
+		JMP paso2
+
+	primerNumero:
+		MOV contadorNumero, 1
+		ConvertirAscii bufferAux
+		PUSH ax 
+		XOR cx, cx 
+		JMP paso2
+
+	segundoNumero:
+		MOV contadorNumero, 0
+		ConvertirAscii bufferAux
+		PUSH ax 
+		JMP  Operacion 
+		XOR cx, cx  
+		JMP paso2
+
+	Operacion:
+		XOR bx, bx 
+		XOR cx, cx 
+		XOR ax, ax 
+		POP ax  
+		MOV bx, ax 
+		POP ax  
+		MOV cx, ax 
+		POP ax 
+
+		CMP ah, 2Dh ;resta
+		JE Suma
+				
+
+	Suma:			
+		MOV ax, cx 
+		SUB ax, bx
+
+		XOR cx, cx 
+		MOV cx, ax 
+		PUSH ax 
+		MOV ax, cx
+
+		POP ax 
+		MOV bx, ax 
+		MOV ax, bx 
+		PUSH ax 
+
+		MOV contadorNumero, 1
+		JMP revisarPila
+		
+		XOR cx, cx 
+		INC si 
+		JMP salir
+
+	revisarPila:
+		XOR cx, cx
+		XOR bx, bx 
+		XOR ax, ax 
+		POP ax  
+		MOV bx, ax 
+		POP ax  
+
+		CMP ah, 2Dh  ; -
+		JE regresarPila
+		
+		MOV cx, ax 
+		POP ax 
+
+		CMP ah, 2Bh 
+		JE Suma
+
+	regresarPila:
+		PUSH ax 
+		MOV ax, bx 
+		PUSH ax 
+		INC si 
+		JMP salir
+
+
+	salir:
+		XOR ax, ax 
+		POP ax 
+		MOV auxiliar, 0
+		MOV auxiliar, ax 
+
+		limpiarBuffer bufferAux
+		ConvertirString bufferAux
+		;limpiarBuffer date2
+		;llenarOperacionesR date2, bufferAux
+		limpiarBuffer bufferAux
+		MOV ax, auxiliar 
+		PUSH ax 
+		
+		XOR ax, ax 
+		XOR cx, cx 
+		JMP salir1
+	
+	salir1:
+
+endm 
+
+
+llamar_mediana macro
+		LOCAL ciclo, ciclo1, ciclo2, ciclo3,ciclo4,ciclo5, ciclo6, ciclo7, ciclo8, salir
+	ciclo:
+		ADD ciclox, 1 
+		JMP ciclo1
+	ciclo1:
+		MOV nega2, 0
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR entra1, r11
+		llenarOperacionesR entra2, r12
+		mediana1
+		cmp nega2, 1; si es - va aumentar la posicion-, estan bien los ordenes
+		je ciclo2
+		cmp nega2, 0  ; es + va ir a cambiar, esta mal los ordenes.
+		je cambiar1
+	ciclo2:
+		MOV nega2, 0
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR entra1, r12
+		llenarOperacionesR entra2, r13
+		mediana1
+		cmp nega2, 1; si es - va aumentar la posicion-, estan bien los ordenes
+		je ciclo3
+		cmp nega2, 0  ; es + va ir a cambiar, esta mal los ordenes.
+		je cambiar2
+	
+	ciclo3:
+		MOV nega2, 0
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR entra1, r13
+		llenarOperacionesR entra2, r14
+		mediana1
+		cmp nega2, 1; si es - va aumentar la posicion-, estan bien los ordenes
+		je ciclo4
+		cmp nega2, 0  ; es + va ir a cambiar, esta mal los ordenes.
+		je cambiar3
+
+	ciclo4:
+		MOV nega2, 0
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR entra1, r14
+		llenarOperacionesR entra2, r15
+		mediana1
+		cmp nega2, 1; si es - va aumentar la posicion-, estan bien los ordenes
+		je ciclo5
+		cmp nega2, 0  ; es + va ir a cambiar, esta mal los ordenes.
+		je cambiar4
+
+	ciclo5:
+		MOV nega2, 0
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR entra1, r15
+		llenarOperacionesR entra2, r16
+		mediana1
+		cmp nega2, 1; si es - va aumentar la posicion-, estan bien los ordenes
+		je salir
+		cmp nega2, 0  ; es + va ir a cambiar, esta mal los ordenes.
+		je cambiar5
+
+	ciclo6:
+		MOV nega2, 0
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR entra1, r16
+		llenarOperacionesR entra2, r17
+		mediana1
+		cmp nega2, 1; si es - va aumentar la posicion-, estan bien los ordenes
+		je salir
+		cmp nega2, 0  ; es + va ir a cambiar, esta mal los ordenes.
+		je cambiar6
+
+	ciclo7:
+		MOV nega2, 0
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR entra1, r17
+		llenarOperacionesR entra2, r18
+		mediana1
+		cmp nega2, 1; si es - va aumentar la posicion-, estan bien los ordenes
+		je salir
+		cmp nega2, 0  ; es + va ir a cambiar, esta mal los ordenes.
+		je cambiar7
+
+	ciclo8:
+		MOV nega2, 0
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR entra1, r18
+		llenarOperacionesR entra2, r19
+		mediana1
+		cmp nega2, 1; si es - va aumentar la posicion-, estan bien los ordenes
+		je salir
+		cmp nega2, 0  ; es + va ir a cambiar, esta mal los ordenes.
+		je cambiar8
+
+	ciclo9:
+		MOV nega2, 0
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR entra1, r19
+		llenarOperacionesR entra2, r20
+		mediana1
+		cmp nega2, 1; si es - va aumentar la posicion-, estan bien los ordenes
+		je salir
+		cmp nega2, 0  ; es + va ir a cambiar, esta mal los ordenes.
+		je cambiar9
+
+	
+
+	
+	cambiar1:
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR auxmedia1,r11 ; guarda el valos 1
+		llenarOperacionesR auxmedia2,r12 ; guarda el valor 2
+		limpiarBuffer r11  ;limpia las variuables
+		limpiarBuffer r12
+		llenarOperacionesR r11,auxmedia2  ;regresa el valor cambiado 
+		llenarOperacionesR r12,auxmedia1
+		limpiarBuffer auxmedia1  ; limpia los auxiliares
+		limpiarBuffer auxmedia2
+		JMP ciclo2
+
+	cambiar2:
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR auxmedia1,r12 ; guarda el valos 1
+		llenarOperacionesR auxmedia2,r13 ; guarda el valor 2
+		limpiarBuffer r12  ;limpia las variuables
+		limpiarBuffer r13
+		llenarOperacionesR r12,auxmedia2  ;regresa el valor cambiado 
+		llenarOperacionesR r13,auxmedia1
+		limpiarBuffer auxmedia1  ; limpia los auxiliares
+		limpiarBuffer auxmedia2
+		JMP ciclo3
+
+	cambiar3:
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR auxmedia1,r13 ; guarda el valos 1
+		llenarOperacionesR auxmedia2,r14 ; guarda el valor 2
+		limpiarBuffer r13  ;limpia las variuables
+		limpiarBuffer r14
+		llenarOperacionesR r13,auxmedia2  ;regresa el valor cambiado 
+		llenarOperacionesR r14,auxmedia1
+		limpiarBuffer auxmedia1  ; limpia los auxiliares
+		limpiarBuffer auxmedia2
+		JMP ciclo4
+
+	cambiar4:
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR auxmedia1,r14 ; guarda el valos 1
+		llenarOperacionesR auxmedia2,r15 ; guarda el valor 2
+		limpiarBuffer r14  ;limpia las variuables
+		limpiarBuffer r15
+		llenarOperacionesR r14,auxmedia2  ;regresa el valor cambiado 
+		llenarOperacionesR r15,auxmedia1
+		limpiarBuffer auxmedia1  ; limpia los auxiliares
+		limpiarBuffer auxmedia2
+
+		JMP ciclo5
+
+	cambiar5:
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR auxmedia1,r15 ; guarda el valos 1
+		llenarOperacionesR auxmedia2,r16 ; guarda el valor 2
+		limpiarBuffer r15  ;limpia las variuables
+		limpiarBuffer r16
+		llenarOperacionesR r15,auxmedia2  ;regresa el valor cambiado 
+		llenarOperacionesR r16,auxmedia1
+		limpiarBuffer auxmedia1  ; limpia los auxiliares
+		limpiarBuffer auxmedia2
+		cmp ciclox, 10
+		je salir
+		JMP ciclo6
+	
+	cambiar6:
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR auxmedia1,r16 ; guarda el valos 1
+		llenarOperacionesR auxmedia2,r17 ; guarda el valor 2
+		limpiarBuffer r16  ;limpia las variuables
+		limpiarBuffer r17
+		llenarOperacionesR r16,auxmedia2  ;regresa el valor cambiado 
+		llenarOperacionesR r17,auxmedia1
+		limpiarBuffer auxmedia1  ; limpia los auxiliares
+		limpiarBuffer auxmedia2
+		cmp ciclox, 10
+		je salir
+		JMP ciclo7
+
+	cambiar7:
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR auxmedia1,r17 ; guarda el valos 1
+		llenarOperacionesR auxmedia2,r18 ; guarda el valor 2
+		limpiarBuffer r17  ;limpia las variuables
+		limpiarBuffer r18
+		llenarOperacionesR r17,auxmedia2  ;regresa el valor cambiado 
+		llenarOperacionesR r18,auxmedia1
+		limpiarBuffer auxmedia1  ; limpia los auxiliares
+		limpiarBuffer auxmedia2
+		cmp ciclox, 10
+		je salir
+		JMP ciclo8
+
+	cambiar8:
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR auxmedia1,r18 ; guarda el valos 1
+		llenarOperacionesR auxmedia2,r19 ; guarda el valor 2
+		limpiarBuffer r18  ;limpia las variuables
+		limpiarBuffer r19
+		llenarOperacionesR r18,auxmedia2  ;regresa el valor cambiado 
+		llenarOperacionesR r19,auxmedia1
+		limpiarBuffer auxmedia1  ; limpia los auxiliares
+		limpiarBuffer auxmedia2
+		cmp ciclox, 10
+		je salir
+		JMP ciclo9
+	
+	cambiar9:
+		limpiarBuffer entra1
+		limpiarBuffer entra2
+		llenarOperacionesR auxmedia1,r19 ; guarda el valos 1
+		llenarOperacionesR auxmedia2,r20 ; guarda el valor 2
+		limpiarBuffer r19  ;limpia las variuables
+		limpiarBuffer r20
+		llenarOperacionesR r19,auxmedia2  ;regresa el valor cambiado 
+		llenarOperacionesR r20,auxmedia1
+		limpiarBuffer auxmedia1  ; limpia los auxiliares
+		limpiarBuffer auxmedia2
+		cmp ciclox, 10
+		je salir
+		JMP ciclo
+
+
+
+
+	salir:
+		cmp ciclox, 10
+		je salir1
+		JMP ciclo
+	salir1:
+		
+		
+
+
+endm
+
+
+llamar_mediana2 macro
+		LOCAL ciclo, ciclo1, ciclo2, ciclo3,ciclo4,ciclo5, ciclo6, ciclo7, ciclo8, salir
+	ciclo11:
+		cmp r11,24h
+		je ciclo12
+		JMP s11
+	ciclo12:
+		cmp r12,24h
+		je ciclo13 ; +1
+		JMP s12
+	ciclo13:
+		cmp r13,24h
+		je ciclo14 ; +1
+		JMP s13
+	ciclo14:
+		cmp r14,24h
+		je ciclo15 ; +1
+		JMP s14
+	ciclo15:
+		cmp r15,24h
+		je ciclo16 ; +1
+		JMP s15
+	ciclo16:
+		cmp r16,24h
+		je ciclo17 ; +1
+		JMP s16
+	ciclo17:
+		cmp r17,24h
+		je ciclo18 ; +1
+		JMP s17
+	ciclo18:
+		cmp r18,24h
+		je ciclo19 ; +1
+		JMP s18
+	ciclo19:
+		cmp r19,24h
+		je ciclo20 ; +1
+		JMP s19
+	ciclo20:
+		llenarOperacionesR bufferMenorR,r20
+		JMP salir
+	
+	s11:
+		limpiarBuffer bufferMenorR
+		llenarOperacionesR bufferMenorR,r11
+		JMP salir
+	s12:
+		limpiarBuffer bufferMenorR
+		llenarOperacionesR bufferMenorR,r12
+		JMP salir
+	s13:
+		limpiarBuffer bufferMenorR
+		llenarOperacionesR bufferMenorR,r13
+		JMP salir
+	s14:
+		limpiarBuffer bufferMenorR
+		llenarOperacionesR bufferMenorR,r14
+		JMP salir
+	s15:
+		limpiarBuffer bufferMenorR
+		llenarOperacionesR bufferMenorR,r15
+		JMP salir
+	s16:
+		limpiarBuffer bufferMenorR
+		llenarOperacionesR bufferMenorR,r16
+		JMP salir
+	s17:
+		limpiarBuffer bufferMenorR
+		llenarOperacionesR bufferMenorR,r17
+		JMP salir
+	s18:
+		limpiarBuffer bufferMenorR
+		llenarOperacionesR bufferMenorR,r18
+		JMP salir
+	s19:
+		limpiarBuffer bufferMenorR
+		llenarOperacionesR bufferMenorR,r19
+		JMP salir
+
+
+	salir:
+		limpiarBuffer bufferMayorR
+		llenarOperacionesR bufferMayorR,r20
+
+endm
 
 print macro cadena
 		MOV ah, 09h
@@ -359,6 +881,7 @@ limpiarBuffer macro fila
 		POP si
 		POP cx 
 endm 
+
 
 revisarBuffer macro 
 	LOCAL CONTINUE, Imprimir, SALIR
@@ -411,6 +934,7 @@ leyendoJSON  macro buffer
 		MOV contadorPadre, 0
 		MOV finOpe, 0
 		MOV contadorLLaves, 0
+		MOV nega2, 0
 		MOV contadorNumero, 0
 		MOV totalOperaciones, 0
 		MOV contadorguardar, 0
@@ -504,11 +1028,24 @@ leyendoJSON  macro buffer
 			CMP contadorguardar, 5
 			JE base5
 
+			CMP contadorguardar, 6
+			JE base6
+			CMP contadorguardar, 7
+			JE base7
+			CMP contadorguardar, 8
+			JE base8
+			CMP contadorguardar, 9
+			JE base9
+			CMP contadorguardar, 10
+			JE base10
+
 			JMP CICLO
 
 		base1:
 			llenarOperacionesR name1, nombreOperacion
 			llenarOperacionesR r1, pivote
+			llenarOperacionesR r11, pivote
+			llenarOperacionesR date2, pivote
 			limpiarBuffer pivote
 			limpiarBuffer iteraciones
 			llenarOperacionesR iteraciones, uno
@@ -517,6 +1054,8 @@ leyendoJSON  macro buffer
 		base2:
 			llenarOperacionesR name2, nombreOperacion
 			llenarOperacionesR r2, pivote
+			llenarOperacionesR r12, pivote
+			;llenarOperacionesR date2, pivote
 			limpiarBuffer iteraciones
 			llenarOperacionesR iteraciones, dos
 			limpiarBuffer pivote
@@ -525,7 +1064,7 @@ leyendoJSON  macro buffer
 		base3:
 			llenarOperacionesR name3, nombreOperacion
 			llenarOperacionesR r3, pivote
-			llenarOperacionesR date, pivote
+			llenarOperacionesR r13, pivote
 			limpiarBuffer pivote
 			limpiarBuffer iteraciones
 			llenarOperacionesR iteraciones, tres
@@ -534,7 +1073,7 @@ leyendoJSON  macro buffer
 		base4:
 			llenarOperacionesR name4, nombreOperacion
 			llenarOperacionesR r4, pivote
-			llenarOperacionesR date, pivote
+			llenarOperacionesR r14, pivote
 			limpiarBuffer pivote
 			limpiarBuffer iteraciones
 			llenarOperacionesR iteraciones, cuatro
@@ -543,14 +1082,59 @@ leyendoJSON  macro buffer
 		base5:
 			llenarOperacionesR name5, nombreOperacion
 			llenarOperacionesR r5, pivote
-			llenarOperacionesR date, pivote
+			llenarOperacionesR r15, pivote
 			limpiarBuffer pivote
 			limpiarBuffer iteraciones
 			llenarOperacionesR iteraciones, cinco
 			JMP CICLO
+		base6:
+			llenarOperacionesR name6, nombreOperacion
+			llenarOperacionesR r6, pivote
+			llenarOperacionesR r16, pivote
+			limpiarBuffer pivote
+			limpiarBuffer iteraciones
+			llenarOperacionesR iteraciones, seis
+			JMP CICLO
+		base7:
+			llenarOperacionesR name7, nombreOperacion
+			llenarOperacionesR r7, pivote
+			llenarOperacionesR r17, pivote
+			limpiarBuffer pivote
+			limpiarBuffer iteraciones
+			llenarOperacionesR iteraciones, siete
+			JMP CICLO
+		
 
-		
-		
+
+		base8:
+			llenarOperacionesR name8, nombreOperacion
+			llenarOperacionesR r8, pivote
+			llenarOperacionesR r18, pivote
+			limpiarBuffer pivote
+			limpiarBuffer iteraciones
+			llenarOperacionesR iteraciones, ocho
+			JMP CICLO
+
+		base9:
+			llenarOperacionesR name9, nombreOperacion
+			llenarOperacionesR r9, pivote
+			llenarOperacionesR r19, pivote
+			limpiarBuffer pivote
+			limpiarBuffer iteraciones
+			llenarOperacionesR iteraciones, nueve
+			JMP CICLO
+
+		base10:
+			llenarOperacionesR name10, nombreOperacion
+			llenarOperacionesR r10, pivote
+			llenarOperacionesR r20, pivote
+			limpiarBuffer pivote
+			limpiarBuffer iteraciones
+			llenarOperacionesR iteraciones, diez
+			JMP CICLO
+
+
+
 		BuscarID:
 		
 			INC si 
@@ -1064,16 +1648,8 @@ leyendoJSON  macro buffer
 			;print msgTotalOperaciones
 			;print bufferAux
 			;print bufferAux  ; miro que hay en la pila
-			print saltoLinea
-			print name1
-			print r1
-			print saltoLinea
-			print name2
-			print r2
-			print saltoLinea
-			print name3
-			print r3
 			print bufferOperaciones  ; imprime la cadena que tiene los
+			
 endm 
 
 
@@ -1361,13 +1937,33 @@ buscandoID macro
 	cmp al, 1
 	JE iname3
 
-	compararCadenas comandoConsola, name4, 12
+	compararCadenas comandoConsola, name4, 20
 	cmp al, 1
 	JE iname4
 
-	compararCadenas comandoConsola, name5, 12
+	compararCadenas comandoConsola, name5, 20
 	cmp al, 1
 	JE iname5
+
+	compararCadenas comandoConsola, name6, 20
+	cmp al, 1
+	JE iname6
+
+	compararCadenas comandoConsola, name7, 20
+	cmp al, 1
+	JE iname7
+
+	compararCadenas comandoConsola, name8, 20
+	cmp al, 1
+	JE iname8
+
+	compararCadenas comandoConsola, name9, 20
+	cmp al, 1
+	JE iname9
+
+	compararCadenas comandoConsola, name10, 20
+	cmp al, 1
+	JE iname10
 
 	
 	JMP SALIR
@@ -1399,6 +1995,36 @@ buscandoID macro
 	iname5:
 		print saltoLinea
 		print r5
+		limpiarBuffer comandoConsola
+		JMP SALIR
+	
+	iname6:
+		print saltoLinea
+		print r6
+		limpiarBuffer comandoConsola
+		JMP SALIR
+	
+	iname7:
+		print saltoLinea
+		print r7
+		limpiarBuffer comandoConsola
+		JMP SALIR
+	
+	iname8:
+		print saltoLinea
+		print r8
+		limpiarBuffer comandoConsola
+		JMP SALIR
+
+	iname9:
+		print saltoLinea
+		print r9
+		limpiarBuffer comandoConsola
+		JMP SALIR
+
+	iname10:
+		print saltoLinea
+		print r10
 		limpiarBuffer comandoConsola
 		JMP SALIR
 
@@ -1656,8 +2282,9 @@ ConvertirString macro buffer
 
 	NEGATIVO:
 		neg ax
-		mov buffer[si],45
+		mov buffer[si],45 ;signo menos
 		inc si
+		MOV nega2,1
 		jmp Dividir2
 
 	Dividir:
@@ -1843,10 +2470,6 @@ ObtenerResultados macro
 	
 	;MEDIANA  --- NO SE HA HECHO  ---
 	writeF SIZEOF bufferMediana, bufferMediana, handleFicheroReporte
-	writeF SIZEOF coma, coma, handleFicheroReporte
-
-	; MODA  --- NO SE HA HECHO  --- 
-	writeF SIZEOF bufferModa, bufferModa, handleFicheroReporte	
 	writeF SIZEOF coma, coma, handleFicheroReporte
 
 	;MENOR   
@@ -2202,11 +2825,11 @@ moda dw 0
 menor dw 0
 mayor dw 0 
 
-bufferMediaR dw 10 dup('$')
-bufferMedianaR dw 10 dup('$')
-bufferModaR dw 10 dup('$')
-bufferMenorR dw 10 dup('$')
-bufferMayorR dw 10 dup('$') 
+bufferMediaR dw 30 dup('$')
+bufferMedianaR dw 30 dup('$')
+bufferModaR dw 30 dup('$')
+bufferMenorR dw 30 dup('$')
+bufferMayorR dw 30 dup('$') 
 
 
 
@@ -2238,8 +2861,7 @@ bufferSegundos db 0ah, '			"Segundos":'
 inicioResultados db 0ah, '		"resultados":',
 			        0ah, '		{', 
 			        0ah, '			"Media": '
-bufferMediana db 0ah,    ' 			"Mediana": "Aqui estuviera si tan solo lo hubiera hecho"'
-bufferModa db 0ah,       '			"Moda": "Aqui estuviera si tan solo lo hubiera hecho"'
+bufferMediana db 0ah,    ' 			"Mediana": " "'
 bufferMenor db 0ah,      '			"Menor": '
 bufferMayor db 0ah,      '			"Mayor": '
 inicioPadre db 0ah,    '		"operaciones":'
@@ -2280,6 +2902,33 @@ name4 db 20 dup('$')
 r4 db 30 dup('$')
 name5 db 20 dup('$')
 r5 db 30 dup('$')
+
+name6 db 20 dup('$')
+r6 db 30 dup('$')
+
+name7 db 20 dup('$')
+r7 db 30 dup('$')
+
+name8 db 20 dup('$')
+r8 db 30 dup('$')
+
+name9 db 20 dup('$')
+r9 db 30 dup('$')
+
+name10 db 20 dup('$')
+r10 db 30 dup('$')
+
+
+r11 db 30 dup('$')
+r12 db 30 dup('$')
+r13 db 30 dup('$')
+r14 db 30 dup('$')
+r15 db 30 dup('$')
+r16 db 30 dup('$')
+r17 db 30 dup('$')
+r18 db 30 dup('$')
+r19 db 30 dup('$')
+r20 db 30 dup('$')
 
 
 pivote db 30 dup('$')
@@ -2333,6 +2982,9 @@ contadorLlaves db 0
 contadorguardar db 0
 
 bufferAux db 20 dup('$')
+auxmedia1 db 20 dup('$')
+auxmedia2 db 20 dup('$')
+
 bufferAux2 db 20 dup('$')
 finOpe db 0
 msgRegresarPila db 0ah, 0dh, 'Regresando registros a la Pila', '$'
@@ -2352,10 +3004,14 @@ tope db 0ah, 0dh, 'operacion simbolo', '$'
 
 tnumero db 0ah, 0dh, '#', '$'
 
+date2 db 30 dup(0)
 
 
 
+nega db 0ah, 0dh, 'hay negativo', '$'
+nega2 db 0
 
+ciclox db 0
 
 ;==============OPERACIONES==============================================
 resultados db 30 dup(0)
@@ -2374,6 +3030,8 @@ namePadre db 30 dup('$'), '$'
 contadorbufferPadre db 0
 auxMayor dw 0
 auxMenor dw 0
+count dw 00h
+forV dw 00h
 
 
 
@@ -2406,9 +3064,17 @@ main proc
 		print encCargarArchivo
 		print msgCargarArchivo
 		opcion1
+
 		llamar_media
 		media2
-		print date
+
+		print saltoLinea
+		print bufferMediaR
+		print saltoLinea
+		llamar_mediana
+		llamar_mediana2
+		print bufferMayorR
+		print bufferMenorR
 
 		JMP Ingresar
 
